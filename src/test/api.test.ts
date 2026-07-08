@@ -18,8 +18,8 @@ beforeEach(async () => {
   await reseed();
 });
 
-const ada = authHeaders("user_ada", "student"); // enrolled: ts101, db201
-const linus = authHeaders("user_linus", "student"); // enrolled: db201 only
+const ada = authHeaders("user_ada", "student");
+const linus = authHeaders("user_linus", "student");
 const mod = authHeaders("user_mod", "moderator");
 
 describe("authorization boundaries", () => {
@@ -29,7 +29,6 @@ describe("authorization boundaries", () => {
   });
 
   it("403 when a student saves a post in a course they're not enrolled in", async () => {
-    // Linus is only in db201; post_ts101_1 is in ts101.
     const res = await savePOST(
       makeRequest("/api/posts/post_ts101_1/save", { method: "POST", headers: linus }),
       postParams("post_ts101_1"),
@@ -60,19 +59,18 @@ describe("authorization boundaries", () => {
   });
 
   it("the saved list only ever returns the caller's own saves", async () => {
-    // Ada seeded with 2 active saves; Grace also saved post_ts101_1.
     const res = await savedGET(makeRequest("/api/saved", { headers: ada }));
     expect(res.status).toBe(200);
     const body = await res.json();
 
     expect(body.items).toHaveLength(2);
-    // Most-recently-saved first: post_ts101_2 (saved after post_ts101_1).
+
     expect(body.items.map((p: { id: string }) => p.id)).toEqual([
       "post_ts101_2",
       "post_ts101_1",
     ]);
     expect(body.items.every((p: { hasSaved: boolean }) => p.hasSaved)).toBe(true);
-    // Shared post shows the aggregate count across users (Ada + Grace).
+
     const shared = body.items.find((p: { id: string }) => p.id === "post_ts101_1");
     expect(shared.savesCount).toBe(2);
   });
@@ -120,14 +118,13 @@ describe("happy path — save / un-save", () => {
   });
 
   it("un-saves, then re-saves (reactivates) without duplicating", async () => {
-    // Ada already has an active save on post_ts101_1 (shared count starts at 2).
     const unsaved = await saveDELETE(
       makeRequest("/api/posts/post_ts101_1/save", { method: "DELETE", headers: ada }),
       postParams("post_ts101_1"),
     );
     const afterUnsave = await unsaved.json();
     expect(afterUnsave.hasSaved).toBe(false);
-    expect(afterUnsave.savesCount).toBe(1); // Grace's save remains
+    expect(afterUnsave.savesCount).toBe(1);
 
     const resaved = await savePOST(
       makeRequest("/api/posts/post_ts101_1/save", { method: "POST", headers: ada }),
@@ -135,7 +132,7 @@ describe("happy path — save / un-save", () => {
     );
     const afterResave = await resaved.json();
     expect(afterResave.hasSaved).toBe(true);
-    expect(afterResave.savesCount).toBe(2); // back to Ada + Grace, no duplicate
+    expect(afterResave.savesCount).toBe(2);
   });
 });
 

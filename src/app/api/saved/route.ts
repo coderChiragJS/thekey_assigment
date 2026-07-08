@@ -8,12 +8,6 @@ import { getSavedList } from "@/server/repo";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/**
- * GET /api/saved?cursor=&limit=
- * The caller's OWN saved posts, most-recently-saved first, paginated. There is
- * deliberately no userId parameter — the list is always the authenticated
- * caller's, which structurally enforces the "own list only" rule.
- */
 export const GET = handle(async (req: NextRequest) => {
   const ctx = requireAuth(req.headers);
   const { searchParams } = new URL(req.url);

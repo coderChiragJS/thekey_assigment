@@ -26,7 +26,6 @@ function interpolate(template: string, vars?: Vars): string {
   );
 }
 
-/** Translate a plain message key, with optional {var} interpolation. */
 export function translate(
   locale: Locale,
   key: MessageKey,
@@ -36,7 +35,6 @@ export function translate(
   return interpolate(template, vars);
 }
 
-/** Translate a pluralized count message (e.g. "1 save" / "12 saves"). */
 export function translateCount(
   locale: Locale,
   key: string,
@@ -47,7 +45,6 @@ export function translateCount(
   return formatPlural(locale, count, forms);
 }
 
-/** Locale-aware date formatting for post timestamps. */
 export function formatDate(locale: Locale, iso: string): string {
   return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",

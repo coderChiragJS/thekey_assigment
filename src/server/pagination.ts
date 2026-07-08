@@ -1,10 +1,6 @@
-/**
- * Opaque keyset cursors. We paginate by (timestamp, id) rather than OFFSET so
- * pages stay stable as rows are inserted/removed, and stay cheap at scale.
- */
 export interface Cursor {
-  readonly ts: number; // epoch ms of the sort column
-  readonly id: string; // tiebreaker id
+  readonly ts: number;
+  readonly id: string;
 }
 
 export function encodeCursor(ts: number, id: string): string {
@@ -29,7 +25,6 @@ export function decodeCursor(raw: string | null | undefined): Cursor | null {
 export const DEFAULT_LIMIT = 10;
 export const MAX_LIMIT = 50;
 
-/** Clamp a requested page size into a sane range. */
 export function clampLimit(requested: number | undefined): number {
   if (requested === undefined || !Number.isFinite(requested)) {
     return DEFAULT_LIMIT;

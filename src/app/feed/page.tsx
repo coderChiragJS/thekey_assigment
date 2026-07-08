@@ -15,7 +15,6 @@ export default function FeedPage() {
   const coursesQuery = useCourses();
   const [courseId, setCourseId] = useState<string | undefined>(undefined);
 
-  // Default to the first visible course once courses load.
   useEffect(() => {
     if (!courseId && coursesQuery.data?.length) {
       setCourseId(coursesQuery.data[0]!.id);

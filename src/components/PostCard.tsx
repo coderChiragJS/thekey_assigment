@@ -7,13 +7,12 @@ import { SavesCountLabel } from "./SavesCountLabel";
 
 interface Props {
   post: PostDTO;
-  /** Optional course label (shown in the cross-course saved view). */
+
   courseTitle?: string;
   onToggle: () => void;
   togglePending: boolean;
 }
 
-/** Presentational post card — takes data + a toggle handler, fetches nothing. */
 export function PostCard({ post, courseTitle, onToggle, togglePending }: Props) {
   const { t, formatDate } = useI18n();
 

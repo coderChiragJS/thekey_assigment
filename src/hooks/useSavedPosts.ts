@@ -5,7 +5,6 @@ import { api } from "@/lib/api-client";
 import { useCurrentUser } from "@/lib/current-user";
 import { queryKeys } from "@/lib/query-keys";
 
-/** The current user's saved posts, most-recently-saved first (keyset paginated). */
 export function useSavedPosts() {
   const { auth } = useCurrentUser();
   return useInfiniteQuery({

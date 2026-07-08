@@ -1,7 +1,6 @@
 import type { PluralForms } from "@/domain/plural";
 import type { enMessages } from "./en";
 
-/** Spanish message catalog — keys mirror English so both stay in sync. */
 export const esMessages: Record<keyof typeof enMessages, string> = {
   "app.title": "Foro de la Comunidad",
   "app.tagline": "Debates del curso y publicaciones guardadas",
@@ -39,7 +38,6 @@ export const esMessages: Record<keyof typeof enMessages, string> = {
   "common.retry": "Reintentar",
 };
 
-/** Spanish plural forms (same CLDR categories: one / other). */
 export const esPlurals: Record<string, PluralForms> = {
   "post.savesCount": { one: "{count} guardado", other: "{count} guardados" },
 };

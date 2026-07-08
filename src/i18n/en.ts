@@ -1,6 +1,5 @@
 import type { PluralForms } from "@/domain/plural";
 
-/** English message catalog. Every user-facing string lives here (never inline). */
 export const enMessages = {
   "app.title": "Community Forum",
   "app.tagline": "Course discussions & saved posts",
@@ -37,7 +36,6 @@ export const enMessages = {
   "common.retry": "Try again",
 } as const;
 
-/** Plural forms, resolved with Intl.PluralRules (e.g. "1 save" / "12 saves"). */
 export const enPlurals: Record<string, PluralForms> = {
   "post.savesCount": { one: "{count} save", other: "{count} saves" },
 };

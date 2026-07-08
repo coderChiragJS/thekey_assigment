@@ -3,7 +3,6 @@ interface Props {
   body?: string;
 }
 
-/** Presentational empty state used by the feed and saved views. */
 export function EmptyState({ title, body }: Props) {
   return (
     <div className="empty">

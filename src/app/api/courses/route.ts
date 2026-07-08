@@ -7,7 +7,6 @@ import { listVisibleCourses } from "@/server/repo";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** GET /api/courses — courses the caller may see (enrolled, or all for mods). */
 export const GET = handle(async (req: NextRequest) => {
   const ctx = requireAuth(req.headers);
   const courses = await listVisibleCourses(db, ctx);

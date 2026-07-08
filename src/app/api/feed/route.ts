@@ -8,11 +8,6 @@ import { getCourseFeed } from "@/server/repo";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/**
- * GET /api/feed?courseId=&cursor=&limit=
- * Paginated feed for a course, newest first, hydrated with hasSaved + savesCount.
- * 401 unauthenticated · 404 unknown course · 403 not enrolled.
- */
 export const GET = handle(async (req: NextRequest) => {
   const ctx = requireAuth(req.headers);
   const { searchParams } = new URL(req.url);

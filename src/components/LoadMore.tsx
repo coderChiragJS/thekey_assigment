@@ -23,7 +23,6 @@ export function LoadMore({ hasMore, loading, onClick }: Props) {
   );
 }
 
-/** Simple shimmer placeholders while a list loads. */
 export function ListSkeleton({ rows = 3 }: { rows?: number }) {
   return (
     <div className="list" aria-hidden="true">

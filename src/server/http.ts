@@ -2,11 +2,6 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { AppError } from "./errors";
 
-/**
- * Wrap a route handler so domain errors become the right HTTP status codes and
- * validation errors become 400s. This keeps every handler thin: parse →
- * authorize → call the service → return, with no per-handler try/catch.
- */
 export function handle<Args extends unknown[]>(
   fn: (...args: Args) => Promise<Response>,
 ): (...args: Args) => Promise<Response> {

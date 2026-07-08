@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-/**
- * Shared DTO + request schemas. The API validates inbound requests with these,
- * and the client parses responses with the matching ones, so the wire contract
- * is defined in exactly one place.
- */
-
 export const postDtoSchema = z.object({
   id: z.string(),
   courseId: z.string(),
@@ -47,9 +41,6 @@ export type SavedPage = z.infer<typeof savedPageSchema>;
 
 export const coursesSchema = z.array(courseDtoSchema);
 
-/* --------------------------------------------------------- request inputs -- */
-
-// Query params arrive as strings; coerce limit and keep it optional.
 const limitParam = z.coerce.number().int().positive().max(50).optional();
 
 export const feedQuerySchema = z.object({

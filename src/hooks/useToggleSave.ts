@@ -12,11 +12,10 @@ import type { FeedPage, SavedPage } from "@/lib/schemas";
 
 interface ToggleVars {
   postId: string;
-  /** The post's current saved state, so we know which direction to toggle. */
+
   currentlySaved: boolean;
 }
 
-/** Apply an optimistic hasSaved flip + savesCount delta to every feed page. */
 function patchFeed(
   data: InfiniteData<FeedPage>,
   postId: string,
@@ -36,7 +35,6 @@ function patchFeed(
   };
 }
 
-/** Remove a post from the saved list (used when un-saving). */
 function removeFromSaved(
   data: InfiniteData<SavedPage>,
   postId: string,
@@ -50,11 +48,6 @@ function removeFromSaved(
   };
 }
 
-/**
- * Optimistic save/un-save toggle. Flips the flag + count immediately across all
- * cached feeds (and drops the row from the saved list on un-save), rolls back on
- * error, and invalidates on settle so the server's authoritative counts win.
- */
 export function useToggleSave() {
   const { auth } = useCurrentUser();
   const qc = useQueryClient();

@@ -13,21 +13,19 @@ import {
   type Cursor,
 } from "./pagination";
 
-/* ------------------------------------------------------------------ DTOs -- */
-
 export interface PostDTO {
   id: string;
   courseId: string;
   authorId: string;
   authorName: string;
   body: string;
-  createdAt: string; // ISO
+  createdAt: string;
   hasSaved: boolean;
   savesCount: number;
 }
 
 export interface SavedPostDTO extends PostDTO {
-  savedAt: string; // ISO — drives most-recently-saved ordering
+  savedAt: string;
 }
 
 export interface Page<T> {
@@ -46,8 +44,6 @@ export interface SaveFlags {
   savesCount: number;
 }
 
-/* ------------------------------------------------------------- primitives -- */
-
 async function getCourse(db: DB, courseId: string) {
   const rows = await db
     .select()
@@ -57,7 +53,6 @@ async function getCourse(db: DB, courseId: string) {
   return rows[0] ?? null;
 }
 
-/** An "existing" post that hasn't been moderator-removed. */
 async function getActivePost(db: DB, postId: string) {
   const rows = await db
     .select()
@@ -78,10 +73,6 @@ async function isEnrolled(db: DB, userId: string, courseId: string) {
   return rows.length > 0;
 }
 
-/**
- * Enforce that the caller may act within a course. Moderators bypass
- * enrollment; students must be enrolled (else 403).
- */
 async function assertCourseAccess(db: DB, ctx: AuthContext, courseId: string) {
   if (ctx.role === "moderator") return;
   if (!(await isEnrolled(db, ctx.userId, courseId))) {
@@ -89,11 +80,6 @@ async function assertCourseAccess(db: DB, ctx: AuthContext, courseId: string) {
   }
 }
 
-/**
- * Fetch the current save flags for a single post in ONE aggregate query:
- * `savesCount` = active saves across all users, `hasSaved` = caller has an
- * active save.
- */
 async function getSaveFlags(
   db: DB,
   userId: string,
@@ -113,7 +99,6 @@ async function getSaveFlags(
   };
 }
 
-/** Load the (single) bookmark row for a user/post in any state, as a domain record. */
 async function getSaveRecord(
   db: DB,
   userId: string,
@@ -136,8 +121,6 @@ async function getSaveRecord(
   };
 }
 
-/* --------------------------------------------------------------- queries -- */
-
 export async function listVisibleCourses(
   db: DB,
   ctx: AuthContext,
@@ -156,10 +139,6 @@ export async function listVisibleCourses(
     .orderBy(courses.title);
 }
 
-/**
- * Paginated feed for a course, newest first, with hasSaved + savesCount
- * hydrated in a SINGLE query (LEFT JOIN active saves + aggregate) — no N+1.
- */
 export async function getCourseFeed(
   db: DB,
   ctx: AuthContext,
@@ -207,11 +186,6 @@ export async function getCourseFeed(
   }));
 }
 
-/**
- * The caller's own saved posts, most-recently-saved first, paginated. There is
- * no userId parameter — the list is always scoped to the authenticated caller,
- * which structurally enforces the "own list only" rule.
- */
 export async function getSavedList(
   db: DB,
   ctx: AuthContext,
@@ -220,9 +194,6 @@ export async function getSavedList(
   const limit = clampLimit(input.limit);
   const cur = decodeCursor(input.cursor);
 
-  // `savedPosts` (unaliased) = the caller's active save, which defines list
-  // membership + the savedAt ordering. `allSaves` = every active save on that
-  // post, aggregated for savesCount. One query, no N+1.
   const allSaves = alias(savedPosts, "all_saves");
 
   const rows = await db
@@ -267,15 +238,13 @@ export async function getSavedList(
       body: r.body,
       createdAt: r.createdAt.toISOString(),
       savedAt: r.savedAt.toISOString(),
-      hasSaved: true, // by construction, everything here is saved by the caller
+      hasSaved: true,
       savesCount: Number(r.savesCount),
     } satisfies SavedPostDTO,
     ts: r.savedAt.getTime(),
     id: r.savedRowId,
   }));
 }
-
-/* -------------------------------------------------------------- mutations -- */
 
 export async function savePost(
   db: DB,
@@ -297,8 +266,6 @@ export async function savePost(
         .set({ savedAt: record.savedAt, unsavedAt: null })
         .where(eq(savedPosts.id, existing.id));
     } else {
-      // onConflict makes the insert idempotent under a concurrent double-save:
-      // the unique (userId, postId) index turns the race into a reactivation.
       await db
         .insert(savedPosts)
         .values({
@@ -344,7 +311,6 @@ export async function unsavePost(
   return { postId, ...flags };
 }
 
-/** Moderator-only: soft-remove a post. Students are rejected (403) upstream. */
 export async function removePost(
   db: DB,
   ctx: AuthContext,
@@ -360,8 +326,6 @@ export async function removePost(
     .set({ removedAt: new Date() })
     .where(eq(posts.id, postId));
 }
-
-/* ---------------------------------------------------------------- helpers -- */
 
 interface FeedRow {
   id: string;
@@ -387,7 +351,6 @@ function toPostDTO(r: FeedRow): PostDTO {
   };
 }
 
-/** Keyset predicate for a descending (ts, id) ordering. */
 function keysetWhere(
   tsColumn: Parameters<typeof lt>[0],
   idColumn: Parameters<typeof lt>[0],
@@ -401,7 +364,6 @@ function keysetWhere(
   );
 }
 
-/** Turn a `limit + 1` result set into a page with a next cursor. */
 function paginate<Row, T>(
   rows: Row[],
   limit: number,

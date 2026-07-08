@@ -24,7 +24,7 @@ describe("applySave", () => {
     const active: SaveRecord = { createdAt: t0, savedAt: t0, unsavedAt: null };
     const { record, changed } = applySave(active, t1);
     expect(changed).toBe(false);
-    expect(record).toBe(active); // unchanged, no double-count
+    expect(record).toBe(active);
   });
 
   it("reactivates an inactive record without creating a duplicate", () => {
@@ -32,8 +32,8 @@ describe("applySave", () => {
     const { record, changed } = applySave(inactive, t2);
     expect(changed).toBe(true);
     expect(isActive(record)).toBe(true);
-    expect(record.createdAt).toEqual(t0); // history preserved
-    expect(record.savedAt).toEqual(t2); // bumped for recency ordering
+    expect(record.createdAt).toEqual(t0);
+    expect(record.savedAt).toEqual(t2);
   });
 });
 
@@ -44,7 +44,7 @@ describe("applyUnsave", () => {
     expect(changed).toBe(true);
     expect(isActive(record)).toBe(false);
     expect(record.unsavedAt).toEqual(t1);
-    expect(record.createdAt).toEqual(t0); // still preserved
+    expect(record.createdAt).toEqual(t0);
   });
 
   it("is idempotent: unsaving an inactive record is a no-op", () => {
@@ -65,7 +65,7 @@ describe("save/unsave/re-save cycle", () => {
     const unsaved = applyUnsave(created, t1).record;
     const resaved = applySave(unsaved, t2).record;
 
-    expect(resaved.createdAt).toEqual(t0); // original creation time survives
+    expect(resaved.createdAt).toEqual(t0);
     expect(resaved.savedAt).toEqual(t2);
     expect(isActive(resaved)).toBe(true);
   });
@@ -74,15 +74,14 @@ describe("save/unsave/re-save cycle", () => {
 describe("deriveSavesCount", () => {
   it("counts only active records", () => {
     const records: SaveRecord[] = [
-      { createdAt: t0, savedAt: t0, unsavedAt: null }, // active
-      { createdAt: t0, savedAt: t0, unsavedAt: t1 }, // inactive
-      { createdAt: t0, savedAt: t0, unsavedAt: null }, // active
+      { createdAt: t0, savedAt: t0, unsavedAt: null },
+      { createdAt: t0, savedAt: t0, unsavedAt: t1 },
+      { createdAt: t0, savedAt: t0, unsavedAt: null },
     ];
     expect(deriveSavesCount(records)).toBe(2);
   });
 
   it("does not double-count an idempotent re-save", () => {
-    // A single user's record stays a single record across save->save.
     let rec = applySave(null, t0).record;
     rec = applySave(rec, t1).record;
     expect(deriveSavesCount([rec])).toBe(1);

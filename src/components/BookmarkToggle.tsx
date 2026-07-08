@@ -25,7 +25,6 @@ function BookmarkIcon({ filled }: { filled: boolean }) {
   );
 }
 
-/** Presentational save/un-save button. All behaviour comes in via props. */
 export function BookmarkToggle({ saved, pending, onToggle }: Props) {
   const { t } = useI18n();
   return (

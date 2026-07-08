@@ -9,10 +9,6 @@ export const dynamic = "force-dynamic";
 
 type Params = { params: Promise<{ postId: string }> };
 
-/**
- * POST /api/posts/:postId/save — idempotent save.
- * 401 · 404 (no post) · 403 (not enrolled). Returns { hasSaved, savesCount }.
- */
 export const POST = handle(async (req: NextRequest, { params }: Params) => {
   const ctx = requireAuth(req.headers);
   const { postId } = await params;
@@ -20,10 +16,6 @@ export const POST = handle(async (req: NextRequest, { params }: Params) => {
   return json(flags);
 });
 
-/**
- * DELETE /api/posts/:postId/save — idempotent un-save (soft delete).
- * Same authorization rules. Returns the updated { hasSaved, savesCount }.
- */
 export const DELETE = handle(async (req: NextRequest, { params }: Params) => {
   const ctx = requireAuth(req.headers);
   const { postId } = await params;

@@ -1,13 +1,8 @@
-/**
- * Typed application errors. The service/repo layer throws these; the route
- * handlers catch them and map to HTTP status codes. This keeps status-code
- * knowledge at the edge and lets the business layer speak in domain terms.
- */
 export type ErrorCode =
-  | "UNAUTHENTICATED" // 401
-  | "FORBIDDEN" // 403
-  | "NOT_FOUND" // 404
-  | "BAD_REQUEST"; // 400
+  | "UNAUTHENTICATED"
+  | "FORBIDDEN"
+  | "NOT_FOUND"
+  | "BAD_REQUEST";
 
 const STATUS: Record<ErrorCode, number> = {
   UNAUTHENTICATED: 401,

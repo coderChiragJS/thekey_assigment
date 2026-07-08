@@ -11,7 +11,6 @@ import {
   type SavedPage,
 } from "./schemas";
 
-/** Error carrying the HTTP status + domain code, so hooks can branch on 403 etc. */
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -27,7 +26,6 @@ function authHeaders(auth: Auth): Record<string, string> {
   return { "x-user-id": auth.userId, "x-role": auth.role };
 }
 
-/** Single fetch helper: attaches auth headers, throws ApiError, Zod-parses OK bodies. */
 async function request<T>(
   path: string,
   auth: Auth,
@@ -49,7 +47,6 @@ async function request<T>(
       code = body.error?.code ?? code;
       message = body.error?.message ?? message;
     } catch {
-      /* non-JSON error body */
     }
     throw new ApiError(res.status, code, message);
   }
