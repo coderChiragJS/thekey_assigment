@@ -17,7 +17,12 @@ export function toLibsqlUrl(pathOrUrl: string): string {
 
 /** Build a Drizzle client over a libsql connection. */
 export function createDb(pathOrUrl: string): { db: DB; client: Client } {
-  const client = createClient({ url: toLibsqlUrl(pathOrUrl) });
+  const client = createClient({
+    url: toLibsqlUrl(pathOrUrl),
+    // Required only for a hosted libsql/Turso URL; undefined (and ignored) for a
+    // local file. This is what makes the same code deployable to Vercel.
+    authToken: process.env.DATABASE_AUTH_TOKEN,
+  });
   const db = drizzle(client, { schema });
   return { db, client };
 }
