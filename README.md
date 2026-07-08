@@ -7,6 +7,8 @@ enforced against a faked identity.
 Single **Next.js 15 (App Router)** app · **TypeScript strict** · **Drizzle +
 SQLite (libsql)** · **React Query v5** · **Zod** · **Vitest**.
 
+**Live demo:** https://thekeyassigment.vercel.app (Vercel + Turso-hosted libsql)
+
 > Design decisions, trade-offs, and "what I'd do next" live in **[NOTES.md](./NOTES.md)**.
 
 ## Prerequisites
